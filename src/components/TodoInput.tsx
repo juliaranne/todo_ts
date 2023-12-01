@@ -6,7 +6,6 @@ interface TodoInputProps {
 
 const TodoInput = ({ createTodo }: TodoInputProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
-  console.log("rerender");
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
