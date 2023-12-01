@@ -1,4 +1,4 @@
-import { useRef, useReducer } from "react";
+import { useRef, useReducer, useCallback } from "react";
 import Todo from "./Todo";
 import TodoInput from "./TodoInput";
 
@@ -39,10 +39,10 @@ const Todos = () => {
     dispatch({ type: "DELETE", payload: { id, text } });
   };
 
-  const createTodo = (value: string) => {
+  const createTodo = useCallback((value: string) => {
     dispatch({ type: "ADD", payload: { id: idRef.current, text: value } });
     idRef.current += 1;
-  };
+  }, []);
 
   return (
     <>

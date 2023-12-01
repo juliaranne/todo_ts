@@ -5,6 +5,7 @@ interface TodoInputProps {
 }
 
 const TodoInput = ({ createTodo }: TodoInputProps) => {
+  console.log("hlds");
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -26,4 +27,4 @@ const TodoInput = ({ createTodo }: TodoInputProps) => {
   );
 };
 
-export default TodoInput;
+export default React.memo(TodoInput);
