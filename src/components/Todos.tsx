@@ -2,18 +2,30 @@ import { useRef, useReducer } from "react";
 import Todo from "./Todo";
 import TodoInput from "./TodoInput";
 
-interface SingleTodo {
+type SingleTodo = {
   id: number;
   text: string;
-}
+};
 
-const reducer = (state: any, action: any) => {
+type State = {
+  todos: SingleTodo[];
+};
+
+type Action = {
+  type: string;
+  payload: SingleTodo;
+};
+
+const reducer = (state: State, action: Action): State => {
   switch (action.type) {
     case "ADD":
       let newTodos = [...state.todos, action.payload];
       return { ...state, todos: newTodos };
     case "DELETE":
-      return { ...state, todos: action.payload };
+      const remainingTodos = state.todos.filter(
+        (item) => item.id !== action.payload.id
+      );
+      return { ...state, todos: remainingTodos };
     default:
       throw new Error(`Unhandled action type: ${action.type}`);
   }
@@ -23,10 +35,8 @@ const Todos = () => {
   const idRef = useRef(0);
   const [state, dispatch] = useReducer(reducer, { todos: [] });
 
-  const deleteTodo = (id: number) => {
-    const listCopy = JSON.parse(JSON.stringify(state.todos));
-    const activeTodos = listCopy.filter((todo: SingleTodo) => todo.id !== id);
-    dispatch({ type: "DELETE", payload: activeTodos });
+  const deleteTodo = (id: number, text: string) => {
+    dispatch({ type: "DELETE", payload: { id, text } });
   };
 
   const createTodo = (value: string) => {

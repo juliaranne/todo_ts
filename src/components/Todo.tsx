@@ -1,18 +1,18 @@
 interface TodoProps {
   text: string;
   id: number;
-  deleteTodo: (id: number) => void;
+  deleteTodo: (id: number, text: string) => void;
 }
 
 const Todo = ({ text, id, deleteTodo }: TodoProps) => {
-  const handleClick = (id: number) => {
-    deleteTodo(id);
+  const handleClick = () => {
+    deleteTodo(id, text);
   };
 
   return (
     <li>
       {text}
-      <button type="button" onClick={() => handleClick(id)}>
+      <button type="button" onClick={handleClick}>
         Delete X
       </button>
     </li>
