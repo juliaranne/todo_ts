@@ -1,4 +1,4 @@
-import { useRef, useState, useCallback } from "react";
+import { useRef, useReducer } from "react";
 import Todo from "./Todo";
 import TodoInput from "./TodoInput";
 
@@ -7,29 +7,38 @@ interface SingleTodo {
   text: string;
 }
 
+const reducer = (state: any, action: any) => {
+  switch (action.type) {
+    case "ADD":
+      let newTodos = [...state.todos, action.payload];
+      return { ...state, todos: newTodos };
+    case "DELETE":
+      return { ...state, todos: action.payload };
+    default:
+      throw new Error(`Unhandled action type: ${action.type}`);
+  }
+};
+
 const Todos = () => {
   const idRef = useRef(0);
-  const [todoList, setTodoList] = useState<SingleTodo[]>([]);
+  const [state, dispatch] = useReducer(reducer, { todos: [] });
 
   const deleteTodo = (id: number) => {
-    const listCopy = JSON.parse(JSON.stringify(todoList));
+    const listCopy = JSON.parse(JSON.stringify(state.todos));
     const activeTodos = listCopy.filter((todo: SingleTodo) => todo.id !== id);
-    setTodoList(activeTodos);
+    dispatch({ type: "DELETE", payload: activeTodos });
   };
 
-  const createTodo = useCallback(
-    (value: string) => {
-      setTodoList([{ id: idRef.current, text: value }, ...todoList]);
-      idRef.current += 1;
-    },
-    [todoList]
-  );
+  const createTodo = (value: string) => {
+    dispatch({ type: "ADD", payload: { id: idRef.current, text: value } });
+    idRef.current += 1;
+  };
 
   return (
     <>
       <TodoInput createTodo={createTodo} />
       <ul>
-        {todoList.map((item) => (
+        {state.todos.map((item: SingleTodo) => (
           <Todo
             deleteTodo={deleteTodo}
             key={item.id}
