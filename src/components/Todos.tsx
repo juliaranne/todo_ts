@@ -1,5 +1,6 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useCallback } from "react";
 import Todo from "./Todo";
+import TodoInput from "./TodoInput";
 
 interface SingleTodo {
   id: number;
@@ -7,27 +8,34 @@ interface SingleTodo {
 }
 
 const Todos = () => {
-  const inputRef = useRef<HTMLInputElement>(null);
   const idRef = useRef(0);
   const [todoList, setTodoList] = useState<SingleTodo[]>([]);
 
-  const createTodo = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (inputRef?.current?.value.trim()) {
-      setTodoList([
-        { id: idRef.current, text: inputRef.current.value },
-        ...todoList,
-      ]);
-      idRef.current += 1;
-      inputRef.current.value = "";
-    }
+  const deleteTodo = (id: number) => {
+    const listCopy = JSON.parse(JSON.stringify(todoList));
+    const activeTodos = listCopy.filter((todo: SingleTodo) => todo.id !== id);
+    setTodoList(activeTodos);
   };
+
+  const createTodo = useCallback(
+    (value: string) => {
+      setTodoList([{ id: idRef.current, text: value }, ...todoList]);
+      idRef.current += 1;
+    },
+    [todoList]
+  );
 
   return (
     <>
+      <TodoInput createTodo={createTodo} />
       <ul>
         {todoList.map((item) => (
-          <Todo key={item.id} text={item.text} />
+          <Todo
+            deleteTodo={deleteTodo}
+            key={item.id}
+            text={item.text}
+            id={item.id}
+          />
         ))}
       </ul>
     </>

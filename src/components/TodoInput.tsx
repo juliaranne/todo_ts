@@ -1,11 +1,23 @@
+import React, { useRef } from "react";
+
 interface TodoInputProps {
-  createTodo: () => string;
-  inputRef: HTMLInputElement;
+  createTodo: (value: string) => void;
 }
 
-const TodoInput = ({ createTodo, inputref }) => {
+const TodoInput = ({ createTodo }: TodoInputProps) => {
+  const inputRef = useRef<HTMLInputElement>(null);
+  console.log("rerender");
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (inputRef?.current?.value.trim()) {
+      createTodo(inputRef?.current?.value.trim());
+      inputRef.current.value = "";
+    }
+  };
+
   return (
-    <form onSubmit={createTodo}>
+    <form onSubmit={handleSubmit}>
       <label>
         Enter todo
         <input ref={inputRef} type="text" />
